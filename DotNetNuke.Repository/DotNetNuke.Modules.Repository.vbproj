@@ -38,7 +38,7 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -53,9 +53,10 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\bin\</OutputPath>
+    <OutputPath>Bin\</OutputPath>
     <DocumentationFile>DotNetNuke.Modules.Repository.xml</DocumentationFile>
     <BaseAddress>285212672</BaseAddress>
     <ConfigurationOverrideFile>
@@ -75,7 +76,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\..\bin\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DocumentationFile>DotNetNuke.Modules.Repository.xml</DocumentationFile>
     <BaseAddress>285212672</BaseAddress>
     <ConfigurationOverrideFile>
@@ -95,19 +96,24 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DotNetNuke, Version=5.1.4.3, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\bin\DotNetNuke.dll</HintPath>
+    <Reference Include="DotNetNuke">
+      <HintPath>..\www.juvander.fi.SRC\bin\DotNetNuke.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetNuke.FckHtmlEditorProvider, Version=2.0.2.40705, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\bin\DotNetNuke.FckHtmlEditorProvider.dll</HintPath>
+    <Reference Include="DotNetNuke.Instrumentation">
+      <HintPath>..\www.juvander.fi.SRC\bin\DotNetNuke.Instrumentation.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Log4Net">
+      <HintPath>..\www.juvander.fi.SRC\bin\DotNetNuke.Log4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Web.Client">
+      <HintPath>..\www.juvander.fi.SRC\bin\DotNetNuke.Web.Client.dll</HintPath>
     </Reference>
     <Reference Include="DotNetNuke.WebControls">
-      <Name>DotNetNuke.WebControls</Name>
-      <HintPath>..\..\bin\DotNetNuke.WebControls.dll</HintPath>
+      <HintPath>..\www.juvander.fi.SRC\bin\DotNetNuke.WebControls.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetNuke.WebUtility, Version=4.2.0.185, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="DotNetNuke.WebUtility">
+      <HintPath>..\www.juvander.fi.SRC\bin\DotNetNuke.WebUtility.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -138,10 +144,6 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="Telerik.Web.UI, Version=2009.3.1104.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\bin\Telerik.Web.UI.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
@@ -154,7 +156,6 @@
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="03.05.06.txt" />
     <Content Include="About.ascx" />
     <Content Include="DashboardSettings.ascx" />
     <Content Include="EditComment.ascx" />
@@ -328,52 +329,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="03.00.00.SqlDataProvider" />
-    <None Include="03.00.01.SqlDataProvider" />
-    <None Include="03.00.02.SqlDataProvider" />
-    <None Include="03.00.03.SqlDataProvider" />
-    <None Include="03.00.04.SqlDataProvider" />
-    <None Include="03.00.05.SqlDataProvider" />
-    <None Include="03.00.06.SqlDataProvider" />
-    <None Include="03.00.07.SqlDataProvider" />
-    <None Include="03.00.08.SqlDataProvider" />
-    <None Include="03.00.09.SqlDataProvider" />
-    <None Include="03.00.10.SqlDataProvider" />
-    <None Include="03.00.11.SqlDataProvider" />
-    <None Include="03.00.12.SqlDataProvider" />
-    <None Include="03.00.13.SqlDataProvider" />
-    <None Include="03.00.14.SqlDataProvider" />
-    <None Include="03.00.15.SqlDataProvider" />
-    <None Include="03.00.16.SqlDataProvider" />
-    <None Include="03.01.00.SqlDataProvider" />
-    <None Include="03.01.01.SqlDataProvider" />
-    <None Include="03.01.02.SqlDataProvider" />
-    <None Include="03.01.03.SqlDataProvider" />
-    <None Include="03.01.04.SqlDataProvider" />
-    <None Include="03.01.05.SqlDataProvider" />
-    <None Include="03.01.06.SqlDataProvider" />
-    <None Include="03.01.07.SqlDataProvider" />
-    <None Include="03.01.08.SqlDataProvider" />
-    <None Include="03.01.09.SqlDataProvider" />
-    <None Include="03.01.10.SqlDataProvider" />
-    <None Include="03.01.11.SqlDataProvider" />
-    <None Include="03.01.12.SqlDataProvider" />
-    <None Include="03.01.13.SqlDataProvider" />
-    <None Include="03.01.14.SqlDataProvider" />
-    <None Include="03.01.15.SqlDataProvider" />
-    <None Include="03.01.16.SqlDataProvider" />
-    <None Include="03.01.17.SqlDataProvider" />
-    <None Include="03.05.00.SqlDataProvider" />
-    <None Include="03.05.01.SqlDataProvider" />
-    <None Include="03.05.02.SqlDataProvider" />
-    <None Include="03.05.05.SqlDataProvider" />
-    <None Include="03.05.06.SqlDataProvider" />
     <None Include="DotNetNuke_DotNetNuke.Repository.dnn" />
-    <None Include="Uninstall.SqlDataProvider" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="My Project\" />
-    <Folder Include="Packages\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <PropertyGroup>

@@ -78,7 +78,7 @@ Namespace DotNetNuke.Modules.Repository
             'CODEGEN: This method call is required by the Web Form Designer
             'Do not modify it using the code editor.
             InitializeComponent()
-            MyBase.Actions.Add(GetNextActionID, Localization.GetString("AddObject", LocalResourceFile), "", URL:=EditUrl(), secure:=SecurityAccessLevel.Edit, Visible:=True)
+            'MyBase.Actions.Add(GetNextActionID, Localization.GetString("AddObject", LocalResourceFile), "", URL:=EditUrl(), secure:=SecurityAccessLevel.Edit, Visible:=True, NewWindow:=True)
         End Sub
 
 #End Region
@@ -142,9 +142,6 @@ Namespace DotNetNuke.Modules.Repository
 
             Dim objTable As Table
             Dim objRejectionTable As Table
-            Dim objLabel As Label
-            Dim objImageButton As ImageButton
-            Dim objDataList As DataList
             Dim bMovedFile, bMovedImage As Boolean
 
             objTable = CType(e.Item.Cells(0).FindControl("ItemDetailsTable"), Table)
@@ -239,16 +236,15 @@ Namespace DotNetNuke.Modules.Repository
 
                     End If
 
-                    Dim objUsers As New UserController
-                    Dim objModerator As UserInfo = objUsers.GetCurrentUserInfo()
+                    Dim objModerator As UserInfo = UserController.Instance.GetCurrentUserInfo()
                     Dim strBody As String = ""
                     If (Not objRepository Is Nothing) And (Not objModerator Is Nothing) Then
                         If objRepository.AuthorEMail.ToString() <> "" Then
                             strBody = objRepository.Author.ToString() & "," & vbCrLf & vbCrLf
                             strBody = strBody & Localization.GetString("TheFile", LocalResourceFile) & " (" & sFileName & ") " & Localization.GetString("ThatYouUploadedTo", LocalResourceFile) & " " & PortalSettings.PortalName & " " & Localization.GetString("HasBeenApprovedShort", LocalResourceFile) & vbCrLf & vbCrLf
-                            strBody = strBody & Localization.GetString("PortalAddress", LocalResourceFile) & ": " & GetPortalDomainName(PortalAlias.HTTPAlias, Request) & vbCrLf & vbCrLf
+                            strBody = strBody & Localization.GetString("PortalAddress", LocalResourceFile) & ": " & GetPortalDomainName(PortalAlias.HTTPAlias, Request, True) & vbCrLf & vbCrLf
                             strBody = strBody & Localization.GetString("ThankYou", LocalResourceFile) & vbCrLf
-                            DotNetNuke.Services.Mail.Mail.SendMail(objModerator.Membership.Email, objRepository.AuthorEMail, "", PortalSettings.PortalName & ": " & Localization.GetString("HasBeenApprovedLong", LocalResourceFile), strBody, "", "html", "", "", "", "")
+                            DotNetNuke.Services.Mail.Mail.SendMail(objModerator.Email, objRepository.AuthorEMail, "", PortalSettings.PortalName & ": " & Localization.GetString("HasBeenApprovedLong", LocalResourceFile), strBody, "", "html", "", "", "", "")
                         End If
                     End If
 
@@ -279,19 +275,18 @@ Namespace DotNetNuke.Modules.Repository
                     End If
 
                 Case "SendRejection"
-                    Dim objUsers As New UserController
-                    Dim objModerator As UserInfo = objUsers.GetCurrentUserInfo()
+                    Dim objModerator As UserInfo = UserController.Instance.GetCurrentUserInfo()
                     Dim strBody As String = ""
                     Dim txtComment As TextBox
-                    Dim strFileName, strImageFileName As String
+                    Dim strFileName As String
                     txtComment = CType(objRejectionTable.Rows(1).Cells(0).FindControl("txtReason"), TextBox)
                     If (Not objRepository Is Nothing) And (Not objModerator Is Nothing) Then
                         If objRepository.AuthorEMail.ToString() <> "" Then
                             strBody = objRepository.Author.ToString() & "," & vbCrLf & vbCrLf
                             strBody = strBody & Localization.GetString("TheFile", LocalResourceFile) & " (" & sFileName & ") " & Localization.GetString("ThatYouUploadedTo", LocalResourceFile) & " " & PortalSettings.PortalName & " " & Localization.GetString("HasBeenRejectedShort", LocalResourceFile) & vbCrLf & vbCrLf
-                            strBody = strBody & Localization.GetString("PortalAddress", LocalResourceFile) & ": " & GetPortalDomainName(PortalAlias.HTTPAlias, Request) & vbCrLf & vbCrLf
+                            strBody = strBody & Localization.GetString("PortalAddress", LocalResourceFile) & ": " & GetPortalDomainName(PortalAlias.HTTPAlias, Request, True) & vbCrLf & vbCrLf
                             strBody = strBody & txtComment.Text & vbCrLf & vbCrLf
-                            DotNetNuke.Services.Mail.Mail.SendMail(objModerator.Membership.Email, objRepository.AuthorEMail, "", PortalSettings.PortalName & ": " & Localization.GetString("HasBeenRejectedLong", LocalResourceFile), strBody, "", "html", "", "", "", "")
+                            DotNetNuke.Services.Mail.Mail.SendMail(objModerator.Email, objRepository.AuthorEMail, "", PortalSettings.PortalName & ": " & Localization.GetString("HasBeenRejectedLong", LocalResourceFile), strBody, "", "html", "", "", "", "")
                         End If
                     End If
 
@@ -362,13 +357,12 @@ Namespace DotNetNuke.Modules.Repository
         Private Sub lstObjects_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles lstObjects.ItemDataBound
             Dim objTable As Table
             Dim objDownloadLink As LinkButton
-            Dim objImageButton As ImageButton
             Dim objButton As Button
             Dim objLabel, lblDetails As Label
             Dim objHyperLink As HyperLink
             Dim objRepository As RepositoryInfo
 
-            Dim settings As Hashtable = PortalSettings.GetModuleSettings(ModuleId)
+            Dim settings As Hashtable = Helpers.GetModSettings(ModuleId)
 
             If e.Item.ItemType = ListItemType.Item Or e.Item.ItemType = ListItemType.AlternatingItem Then
 
@@ -464,7 +458,6 @@ Namespace DotNetNuke.Modules.Repository
             Dim objRepository As New RepositoryController
 
             Dim ds As New DataSet
-            Dim dv As DataView
 
             If mSortOrder = "" Then
                 mSortOrder = "UpdatedDate"

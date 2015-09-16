@@ -53,7 +53,6 @@ Namespace DotNetNuke.Modules.Repository
 
                 Dim m_repositoryController As New RepositoryController
 
-                Dim _moduleInfo As ModuleInfo
                 Dim _moduleController As New ModuleController
 
                 ' replace all Gooddogs Repository controls with the new Repository controls
@@ -100,7 +99,6 @@ Namespace DotNetNuke.Modules.Repository
             Dim m_message As String = ""
             Dim settings As Hashtable
             Dim m_foldername As String
-            Dim m_Directory As System.IO.Directory
             Dim m_Folders() As String
             Dim m_Folder As String
             Dim m_userFolder As String
@@ -124,7 +122,7 @@ Namespace DotNetNuke.Modules.Repository
                 For Each objModule In arrModules
 
                     ' get the module settings
-                    settings = PortalSettings.GetModuleSettings(objModule.ModuleID)
+                    settings = Helpers.GetModSettings(objModule.ModuleID)
 
                     ' if this module is using UserFolders...
                     If CType(settings("userfolders"), String) <> "" Then
@@ -134,16 +132,16 @@ Namespace DotNetNuke.Modules.Repository
                             m_foldername = CType(settings("folderlocation"), String)
 
                             ' look in the base folder for any user folders
-                            m_Folders = m_Directory.GetDirectories(m_foldername)
+                            m_Folders = System.IO.Directory.GetDirectories(m_foldername)
                             For Each m_Folder In m_Folders
 
                                 m_userFolder = m_Folder.Substring(m_Folder.LastIndexOf("\") + 1)
-                                m_userInfo = m_userController.GetUserByName(objModule.PortalID, m_userFolder)
+                                m_userInfo = Entities.Users.UserController.GetUserByName(objModule.PortalID, m_userFolder)
 
                                 If Not m_userInfo Is Nothing Then
                                     ' we have a user folder, change the folder name to be the userid
                                     m_newFolder = m_Folder.Substring(0, m_Folder.LastIndexOf("\") + 1) & m_userInfo.UserID.ToString()
-                                    m_Directory.Move(m_Folder, m_newFolder)
+                                    Directory.Move(m_Folder, m_newFolder)
                                 End If
 
                             Next

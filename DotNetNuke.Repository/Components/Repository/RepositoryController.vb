@@ -26,9 +26,9 @@ Namespace DotNetNuke.Modules.Repository
             Return CBO.FillCollection(DataProvider.Instance().GetSingleRepositoryObject(itemid), GetType(RepositoryInfo))
         End Function
         Public Function GetSingleRepositoryObject(ByVal ItemId As Integer) As RepositoryInfo
-            Return CType(CBO.FillObject(DataProvider.Instance().GetSingleRepositoryObject(ItemId), GetType(RepositoryInfo)), RepositoryInfo)
+            Return CBO.FillObject(Of RepositoryInfo)(DataProvider.Instance().GetSingleRepositoryObject(ItemId))
         End Function
-        Public Function AddRepositoryObject(ByVal UserName As String, ByVal ModuleId As Integer, ByVal objRepository As RepositoryInfo)
+        Public Function AddRepositoryObject(ByVal UserName As String, ByVal ModuleId As Integer, ByVal objRepository As RepositoryInfo) As Integer
             Return CType(DataProvider.Instance().AddRepositoryObject(UserName, ModuleId, objRepository.Name, _
                 objRepository.Description, objRepository.Author, objRepository.AuthorEMail, objRepository.FileSize, _
                 objRepository.PreviewImage, objRepository.Image, objRepository.FileName, objRepository.Approved, objRepository.ShowEMail, objRepository.Summary, objRepository.SecurityRoles), Integer)
@@ -112,7 +112,7 @@ Namespace DotNetNuke.Modules.Repository
             oRepositoryBusinessController = New Helpers
 
             Dim objModules As New Entities.Modules.ModuleController
-            Dim objModule As Entities.Modules.ModuleInfo = objModules.GetModule(ModuleID, Null.NullInteger)
+            Dim objModule As Entities.Modules.ModuleInfo = objModules.GetModule(ModuleID, Null.NullInteger, False)
 
             Dim RepositoryItemCategoryController As New RepositoryObjectCategoriesController
             Dim RepositoryItemCategories As ArrayList
@@ -214,9 +214,7 @@ Namespace DotNetNuke.Modules.Repository
         ''' </history>
         ''' -----------------------------------------------------------------------------
         Public Sub ImportModule(ByVal ModuleID As Integer, ByVal Content As String, ByVal Version As String, ByVal UserId As Integer) Implements Entities.Modules.IPortable.ImportModule
-            Dim catString As String
-            Dim aCategories() As String
-            Dim thisCategory As String
+
             Dim newCategoryID As Integer
             Dim newItemID As Integer
 

@@ -96,7 +96,14 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DotNetNuke, Version=5.3.1.7, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="DotNetNuke, Version=5.6.1.238, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Library\DotNetNuke.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Provider.DNNProvider, Version=5.6.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Library\DotNetNuke.Provider.DNNProvider.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.ApplicationBlocks.Data, Version=2.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\bin\Microsoft.ApplicationBlocks.Data.dll</HintPath>
@@ -110,6 +117,11 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
+    <ProjectReference Include="..\..\..\DotNetNuke.Modules.Repository.vbproj">
+      <Name>DotNetNuke.Modules.Repository</Name>
+      <Project>{1CE4C76D-F946-47BE-B2CC-A851C2287308}</Project>
+      <Package>{F184B08F-C81C-45F6-A57F-5ABD9991F28F}</Package>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
@@ -155,12 +167,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="My Project\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\DotNetNuke.Modules.Repository.vbproj">
-      <Project>{1CE4C76D-F946-47BE-B2CC-A851C2287308}</Project>
-      <Name>DotNetNuke.Modules.Repository</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <PropertyGroup>

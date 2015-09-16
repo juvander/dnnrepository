@@ -76,7 +76,7 @@ Namespace DotNetNuke.Modules.Repository
 
 
                 ' Get settings from the database 
-                Dim settings As Hashtable = mc.GetModuleSettings(ModuleId)
+                Dim settings As Hashtable = Helpers.GetModSettings(ModuleId)
 
                 If (Page.IsPostBack = False) Then
                     lblMessage.Text = ""
@@ -85,7 +85,7 @@ Namespace DotNetNuke.Modules.Repository
 
                     Dim repositories As New RepositoryController
                     Dim tabs As New TabController
-                    Dim objTab As TabInfo
+
                     Dim objModule As ModuleInfo
                     Dim objItem As ListItem
 
@@ -150,7 +150,6 @@ Namespace DotNetNuke.Modules.Repository
         Public Overrides Sub UpdateSettings()
             Try
                 Dim objModules As New ModuleController
-                Dim item As ListItem
 
                 If ddlRepositoryID.SelectedValue <> "" Then
                     objModules.UpdateModuleSetting(ModuleId, "repository", CType(ddlRepositoryID.SelectedValue, Integer).ToString())

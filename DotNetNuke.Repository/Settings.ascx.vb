@@ -145,7 +145,7 @@ Namespace DotNetNuke.Modules.Repository
 
                 ' Get settings from the database 
                 Dim mc As ModuleController = New ModuleController()
-                Dim settings As Hashtable = mc.GetModuleSettings(ModuleId)
+                Dim settings As Hashtable = Helpers.GetModSettings(ModuleId)
 
                 If (Page.IsPostBack = False) Then
 
@@ -420,8 +420,8 @@ Namespace DotNetNuke.Modules.Repository
                     cboRatingsImages.Items.Clear()
 
                     Dim strImagesRoot As String = Request.MapPath("DesktopModules/Repository/images/ratings")
-                    Dim strFile, strFolder, strImageName As String
-                    Dim arrFolders(), arrFiles() As String
+                    Dim strFolder, strImageName As String
+                    Dim arrFolders() As String
                     If Directory.Exists(strImagesRoot) Then
                         arrFolders = Directory.GetDirectories(strImagesRoot)
                         For Each strFolder In arrFolders
@@ -1022,8 +1022,7 @@ Namespace DotNetNuke.Modules.Repository
 
         Private Sub cmdDeleteAttr_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles cmdDeleteAttr.Click
             If lstAttributes.SelectedIndex <> -1 Then
-                Dim attributes As New RepositoryAttributesController
-                attributes.DeleteRepositoryAttributes(lstAttributes.SelectedValue)
+                RepositoryAttributesController.DeleteRepositoryAttributes(lstAttributes.SelectedValue)
                 BindAttributeList()
             End If
         End Sub
@@ -1038,8 +1037,7 @@ Namespace DotNetNuke.Modules.Repository
 
         Private Sub cmdDeleteValue_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles cmdDeleteValue.Click
             If lstValues.SelectedIndex <> -1 Then
-                Dim attributeValues As New RepositoryAttributeValuesController
-                attributeValues.DeleteRepositoryAttributeValues(lstValues.SelectedValue)
+                RepositoryAttributeValuesController.DeleteRepositoryAttributeValues(lstValues.SelectedValue)
                 lstValues.Items.RemoveAt(lstValues.SelectedIndex)
             End If
         End Sub

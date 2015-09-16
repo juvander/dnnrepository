@@ -19,7 +19,7 @@ Namespace DotNetNuke.Modules.Repository
             Return CBO.FillCollection(DataProvider.Instance().GetRepositoryAttributeValues(AttributeID), GetType(RepositoryAttributeValuesInfo))
         End Function
         Public Function GetSingleRepositoryAttributeValues(ByVal itemID As Integer) As RepositoryAttributeValuesInfo
-            Return CType(CBO.FillObject(DataProvider.Instance().GetSingleRepositoryAttributeValues(itemID), GetType(RepositoryAttributeValuesInfo)), RepositoryAttributeValuesInfo)
+            Return CBO.FillObject(Of RepositoryAttributeValuesInfo)(DataProvider.Instance().GetSingleRepositoryAttributeValues(itemID))
         End Function
         Public Function AddRepositoryAttributeValues(ByVal RepositoryAttributeValuesInfo As RepositoryAttributeValuesInfo) As Integer
             Return CType(DataProvider.Instance().AddRepositoryAttributeValues(RepositoryAttributeValuesInfo.AttributeID, RepositoryAttributeValuesInfo.ValueName), Integer)

@@ -29,6 +29,7 @@ Imports DotNetNuke.Security
 Imports DotNetNuke.Services.Localization
 Imports DotNetNuke.Entities.Modules
 Imports DotNetNuke.UI.WebControls
+Imports DotNetNuke.Instrumentation
 
 Namespace DotNetNuke.Modules.Repository
 
@@ -117,7 +118,7 @@ Namespace DotNetNuke.Modules.Repository
 #Region "Event Handlers"
 
         Private Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-
+            'DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.Page_Load 1")
             oRepositoryBusinessController.LocalResourceFile = Me.LocalResourceFile
 
             Dim objModules As New ModuleController
@@ -141,14 +142,16 @@ Namespace DotNetNuke.Modules.Repository
             Else
                 m_RowCount = 10
             End If
-
+            'DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.Page_Load 2")
             CheckItemRoles()
+            'DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.Page_Load 3")
             oRepositoryBusinessController.SetRepositoryFolders(m_RepositoryId)
-
+            'DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.Page_Load 4")
             LoadDashboardTemplate()
+            'DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.Page_Load 5")
             m_hasTree = False
             BindData()
-
+            'DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.Page_Load 6")
         End Sub
 
         Private Sub datList_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataListItemEventArgs) Handles datList.ItemDataBound
@@ -159,7 +162,7 @@ Namespace DotNetNuke.Modules.Repository
             If m_RepositoryId = -1 Then
                 strTemplateName = "default"
             Else
-                Dim repositorySettings As Hashtable = PortalSettings.GetModuleSettings(m_RepositoryId)
+                Dim repositorySettings As Hashtable = Helpers.GetModSettings(m_RepositoryId)
                 If Not repositorySettings("template") Is Nothing Then
                     strTemplateName = CType(repositorySettings("template"), String)
                 Else
@@ -225,7 +228,7 @@ Namespace DotNetNuke.Modules.Repository
             If m_RepositoryId = -1 Then
                 strTemplateName = "default"
             Else
-                Dim repositorySettings As Hashtable = PortalSettings.GetModuleSettings(m_RepositoryId)
+                Dim repositorySettings As Hashtable = Helpers.GetModSettings(m_RepositoryId)
                 If Not repositorySettings("template") Is Nothing Then
                     strTemplateName = CType(repositorySettings("template"), String)
                 Else
@@ -252,7 +255,10 @@ Namespace DotNetNuke.Modules.Repository
                                     Select Case aTemplate(iPtr + 1)
                                         Case "TREE"
                                             If Not m_hasTree Then
+                                                'DotNetNuke.Instrumentation.DnnLogger.GetLogger("RepositoryDashboard").Debug("m_hasTree was true")
                                                 InjectDNNTreeToken(categories)
+                                            Else
+                                                'DotNetNuke.Instrumentation.DnnLogger.GetLogger("RepositoryDashboard").Debug("m_hasTree was false")
                                             End If
                                         Case "CATEGORY"
                                             InjectCategoryToken(objCategory)
@@ -267,6 +273,8 @@ Namespace DotNetNuke.Modules.Repository
                                     End Select
                                 End If
                             Next
+                        Else
+                            'DotNetNuke.Instrumentation.DnnLogger.GetLogger("RepositoryDashboard").Debug("objPlaceHolder was nothing")
                         End If
 
                     Case "top10Downloads"
@@ -463,11 +471,14 @@ Namespace DotNetNuke.Modules.Repository
 #Region "Private Functions and Subs"
 
         Private Sub CheckForAllItems(ByVal categories As ArrayList)
+
+            'DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.CheckForAllItems 1")
+
             Dim repository As New RepositoryController
             Dim addAllItems As Boolean = False
 
             If m_RepositoryId <> -1 Then
-                Dim repositorySettings As Hashtable = PortalSettings.GetModuleSettings(m_RepositoryId)
+                Dim repositorySettings As Hashtable = Helpers.GetModSettings(m_RepositoryId)
                 If Not repositorySettings("AllowAllFiles") Is Nothing Then
                     If CType(repositorySettings("AllowAllFiles"), String) <> "" Then
                         addAllItems = Boolean.Parse(repositorySettings("AllowAllFiles"))
@@ -482,7 +493,7 @@ Namespace DotNetNuke.Modules.Repository
                 newcat.ModuleId = ModuleId
                 newcat.Parent = -1
                 newcat.ViewOrder = 0
-                Dim repositorySettings As Hashtable = PortalSettings.GetModuleSettings(m_RepositoryId)
+                Dim repositorySettings As Hashtable = Helpers.GetModSettings(m_RepositoryId)
                 Dim bindableList As New ArrayList
                 Dim bIsPersonal As Boolean
                 If repositorySettings("IsPersonal") IsNot Nothing Then
@@ -491,12 +502,16 @@ Namespace DotNetNuke.Modules.Repository
                     bIsPersonal = False
                 End If
 
+#If DEBUG Then
+                DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.CheckForAllItems 1")
+#End If
                 LoadBindableList(bIsPersonal, repository.GetRepositoryObjects(m_RepositoryId, "", "Title", oRepositoryBusinessController.IS_APPROVED, -1, "", -1), bindableList)
 
                 newcat.Count = bindableList.Count
 
                 categories.Insert(0, newcat)
             End If
+            'DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.CheckForAllItems 2")
         End Sub
 
         Private Function CheckUserRoles(ByVal roles As String) As Boolean
@@ -516,6 +531,7 @@ Namespace DotNetNuke.Modules.Repository
                     If Not String.IsNullOrEmpty(Item) Then
                         If PortalSecurity.IsInRole(Item) Then
                             found = True
+                            Continue For
                         End If
                     End If
                 Next
@@ -524,51 +540,79 @@ Namespace DotNetNuke.Modules.Repository
         End Function
 
         Private Function RecalcCategoryCount(ByVal categories As ArrayList) As ArrayList
-
+            'DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.RecalcCategoryCount 1")
             Dim repository As New RepositoryController
             Dim rc As New RepositoryObjectCategoriesController
 
             Dim bIsPersonal As Boolean
-            Dim repositorySettings As Hashtable = PortalSettings.GetModuleSettings(m_RepositoryId)
+            Dim repositorySettings As Hashtable = Helpers.GetModSettings(m_RepositoryId)
 
             If repositorySettings("IsPersonal") IsNot Nothing Then
                 bIsPersonal = Boolean.Parse(repositorySettings("IsPersonal").ToString())
             Else
                 bIsPersonal = False
             End If
-
+            'DotNetNuke.Instrumentation.DnnLogger.GetLogger("RepositoryDashboard").Debug("bIsPersonal " & bIsPersonal)
             ' reset category counts
             For Each category As RepositoryCategoryInfo In categories
+                'DotNetNuke.Instrumentation.DnnLogger.GetLogger("RepositoryDashboard").Debug("Category " & category.Category & " count: " & category.Count)
                 category.Count = 0
             Next
 
             ' get list of repositoryitems filtered by current user and their security roles
             Dim repositoryItems As ArrayList = repository.GetRepositoryObjects(m_RepositoryId, "", "Downloads", 1, -1, "", -1)
             Dim bindableList As ArrayList = New ArrayList()
-            LoadBindableList(bIsPersonal, repositoryItems, bindableList)
 
+#If DEBUG Then
+            DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.RecalcCategoryCount 1")
+#End If
+            LoadBindableList(bIsPersonal, repositoryItems, bindableList)
+            'DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.RecalcCategoryCount 2")
             ' recalc the category counts
-            For Each category As RepositoryCategoryInfo In categories
-                For Each item As RepositoryInfo In bindableList
-                    Dim cats As ArrayList = rc.GetRepositoryObjectCategories(item.ItemId)
-                    For Each _cat As RepositoryObjectCategoriesInfo In cats
+
+
+            'For Each category As RepositoryCategoryInfo In categories
+            '    For Each item As RepositoryInfo In bindableList
+            '        Dim cats As ArrayList = rc.GetRepositoryObjectCategories(item.ItemId)
+            '        For Each _cat As RepositoryObjectCategoriesInfo In cats
+            '            If _cat.CategoryID = category.ItemId Then
+            '                category.Count = category.Count + 1
+            '                'DotNetNuke.Instrumentation.DnnLogger.GetLogger("RepositoryDashboard").Debug("Category " & category.Category & " count: " & category.Count)
+            '            End If
+            '        Next
+            '    Next
+            'Next
+
+            For Each item As RepositoryInfo In bindableList
+                Dim cats As ArrayList = rc.GetRepositoryObjectCategories(item.ItemId)
+                For Each _cat As RepositoryObjectCategoriesInfo In cats
+                    For Each category As RepositoryCategoryInfo In categories
                         If _cat.CategoryID = category.ItemId Then
                             category.Count = category.Count + 1
+                            'DotNetNuke.Instrumentation.DnnLogger.GetLogger("RepositoryDashboard").Debug("Category " & category.Category & " count: " & category.Count)
                         End If
                     Next
                 Next
             Next
 
+#If DEBUG Then
+            DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.RecalcCategoryCount 3")
+#End If
             Return categories
 
         End Function
 
         Private Sub BindData()
+
+#If DEBUG Then
+            DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.BindData 1")
+#End If
+
             Dim repository As New RepositoryController
             Dim cc As New RepositoryCategoryController
             Dim categories As ArrayList = cc.GetRepositoryCategories(m_RepositoryId, -1)
-
-            Dim repositorySettings As Hashtable = PortalSettings.GetModuleSettings(m_RepositoryId)
+            'DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.BindData 2")
+            Dim repositorySettings As Hashtable = Helpers.GetModSettings(m_RepositoryId)
 
             Dim bIsPersonal As Boolean
             If repositorySettings("IsPersonal") IsNot Nothing Then
@@ -577,12 +621,17 @@ Namespace DotNetNuke.Modules.Repository
                 bIsPersonal = False
             End If
 
+
+#If DEBUG Then
+            DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.BindData bIsPersonal: " & bIsPersonal)
+#End If
+
             If bIsPersonal Then
                 categories = RecalcCategoryCount(categories)
             End If
-
+            'DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.BindData 3")
             CheckForAllItems(categories)
-
+            'DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.BindData 4: " + m_DashboardStyle)
             Select Case m_DashboardStyle
                 Case "categories"
                     Try
@@ -595,6 +644,7 @@ Namespace DotNetNuke.Modules.Repository
                         lstObjects.DataSource = categories
                         lstObjects.DataBind()
                     Catch ex As Exception
+                        DotNetNuke.Instrumentation.DnnLog.Error("RepositoryDashboard.BindData 4", ex)
                     End Try
                 Case "top10Downloads"
                     Try
@@ -641,27 +691,44 @@ Namespace DotNetNuke.Modules.Repository
                     Catch ex As Exception
                     End Try
             End Select
-
+            ' DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.BindData 5")
         End Sub
 
         Private Sub LoadBindableList(ByVal bIsPersonal As Boolean, ByVal repositoryItems As ArrayList, ByVal bindableList As ArrayList)
+#If DEBUG Then
+            DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.LoadBindableList 1")
+#End If
             If bIsPersonal Then
+
+#If DEBUG Then
+                DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.LoadBindableList 2")
+#End If
+                Dim isAdmin As Boolean = PortalSecurity.IsInRole("Administrators")
                 For Each dataitem As RepositoryInfo In repositoryItems
-                    If dataitem.CreatedByUser = UserId Or PortalSecurity.IsInRole("Administrators") Then
+                    If dataitem.CreatedByUser = UserId Or isAdmin Then
                         bindableList.Add(dataitem)
                     End If
                 Next
             Else
+
+#If DEBUG Then
+                DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.LoadBindableList 3")
+#End If
                 For Each dataitem As RepositoryInfo In repositoryItems
                     If dataitem.SecurityRoles Is Nothing Then
                         bindableList.Add(dataitem)
                     Else
                         If dataitem.SecurityRoles = String.Empty Or CheckAnyUserRoles(dataitem.SecurityRoles) = True Then
                             bindableList.Add(dataitem)
+                        Else
+                            'DotNetNuke.Instrumentation.DnnLogger.GetLogger("RepositoryDashboard").Debug("Not adding: " & dataitem.Name)
                         End If
                     End If
                 Next
             End If
+#If DEBUG Then
+            DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.LoadBindableList 4")
+#End If
         End Sub
 
         Private Sub LoadDashboardTemplate()
@@ -687,7 +754,7 @@ Namespace DotNetNuke.Modules.Repository
             If m_RepositoryId = -1 Then
                 strTemplateName = "default"
             Else
-                Dim repositorySettings As Hashtable = PortalSettings.GetModuleSettings(m_RepositoryId)
+                Dim repositorySettings As Hashtable = Helpers.GetModSettings(m_RepositoryId)
                 If Not repositorySettings("template") Is Nothing Then
                     strTemplateName = CType(repositorySettings("template"), String)
                 Else
@@ -710,7 +777,7 @@ Namespace DotNetNuke.Modules.Repository
             ' see what tab the repository is on
             Dim modules As New ModuleController
             Dim objModule As New ModuleInfo
-            objModule = modules.GetModule(m_RepositoryId, DotNetNuke.Common.Utilities.Null.NullInteger)
+            objModule = modules.GetModule(m_RepositoryId, DotNetNuke.Common.Utilities.Null.NullInteger, False)
             m_RepositoryTabId = objModule.TabID
             If m_RepositoryTabId = PortalSettings.ActiveTab.TabID Then
                 Return True
@@ -722,7 +789,7 @@ Namespace DotNetNuke.Modules.Repository
         Private Sub CheckItemRoles()
             Try
                 ' get module settings for associated Repository
-                Dim RepositorySettings As Hashtable = PortalSettings.GetModuleSettings(m_RepositoryId)
+                Dim RepositorySettings As Hashtable = Helpers.GetModSettings(m_RepositoryId)
 
                 Dim DownloadRoles As String = ""
                 If Not CType(RepositorySettings("downloadroles"), String) Is Nothing Then
@@ -844,6 +911,9 @@ Namespace DotNetNuke.Modules.Repository
         End Sub
 
         Private Sub InjectDNNTreeToken(ByVal categories As RepositoryCategoryController)
+#If DEBUG Then
+            DotNetNuke.Instrumentation.DnnLog.Debug("RepositoryDashboard.InjectDNNTreeToken ")
+#End If
             Dim obj As New DnnTree() With {
                 .ID = "__Categories",
                 .SystemImagesPath = "~/images/",

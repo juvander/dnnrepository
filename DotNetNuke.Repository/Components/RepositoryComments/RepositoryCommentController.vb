@@ -19,7 +19,7 @@ Namespace DotNetNuke.Modules.Repository
             Return CBO.FillCollection(DataProvider.Instance().GetRepositoryComments(ObjectId, moduleid), GetType(RepositoryCommentInfo))
         End Function
         Public Function GetSingleRepositoryComment(ByVal ItemId As Integer, ByVal moduleid As Integer) As RepositoryCommentInfo
-            Return CType(CBO.FillObject(DataProvider.Instance().GetSingleRepositoryComment(ItemId, moduleid), GetType(RepositoryCommentInfo)), RepositoryCommentInfo)
+            Return CBO.FillObject(Of RepositoryCommentInfo)(DataProvider.Instance().GetSingleRepositoryComment(ItemId, moduleid))
         End Function
         Public Function AddRepositoryComment(ByVal ItemId As Integer, ByVal moduleid As Integer, ByVal UserName As String, ByVal Comment As String) As Integer
             Return CType(DataProvider.Instance().AddRepositoryComment(ItemId, moduleid, UserName, Comment), Integer)

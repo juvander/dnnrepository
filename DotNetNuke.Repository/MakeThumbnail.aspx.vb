@@ -24,6 +24,7 @@ Imports System.Drawing.Image
 Imports System.Drawing.Imaging
 Imports DotNetNuke
 Imports DotNetNuke.Entities.Portals
+Imports DotNetNuke.Entities.Modules
 
 Namespace DotNetNuke.Modules.Repository
 
@@ -55,7 +56,7 @@ Namespace DotNetNuke.Modules.Repository
 #Region "Event Handlers"
 
         Private Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-
+            'DotNetNuke.Instrumentation.DnnLog.Debug("MakeThumbnail.Page_Load 1")
             'Read the querystring params to determine the image to create a thumbnail 
             Dim ImageId As String = Request.QueryString("id")
             Dim ModuleId As String = Request.QueryString("mid")
@@ -64,7 +65,6 @@ Namespace DotNetNuke.Modules.Repository
             Dim strPathToImage As String = ""
             Dim strExtension As String = ""
             Dim b_UseIcon As Boolean = False
-            Dim sNoImage As String
             Dim bIsURL As Boolean = False
 
             Dim _portalSettings As PortalSettings = CType(HttpContext.Current.Items("PortalSettings"), PortalSettings)
@@ -79,7 +79,7 @@ Namespace DotNetNuke.Modules.Repository
 
                     If objRepository.Image = "" Then
                         ' no image, display an icon or generic image based on module settings
-                        Dim settings As Hashtable = _portalSettings.GetModuleSettings(ModuleId)
+                        Dim settings As Hashtable = Helpers.GetModSettings(ModuleId)
 
                         If CType(settings("noimage"), String) <> "" Then
                             strPathToImage = _portalSettings.HomeDirectory & CType(settings("noimage"), String)
@@ -141,7 +141,7 @@ Namespace DotNetNuke.Modules.Repository
 
             Else
                 ' no image id, then we display the "No Image" image for this module
-                Dim settings As Hashtable = _portalSettings.GetModuleSettings(ModuleId)
+                Dim settings As Hashtable = Helpers.GetModSettings(ModuleId)
                 Dim noImageURL As String = CType(settings("noimage"), String)
                 If System.Text.RegularExpressions.Regex.IsMatch(noImageURL.ToLower(), "(http|https|ftp|gopher)://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?") Then
                     strPathToImage = noImageURL
@@ -213,7 +213,7 @@ Namespace DotNetNuke.Modules.Repository
 
                 ' we are serving out the full size image
                 ' if the settings indicate to use a watermark, add the watermark to the image
-                Dim settings As Hashtable = _portalSettings.GetModuleSettings(ModuleId)
+                Dim settings As Hashtable = Helpers.GetModSettings(ModuleId)
                 Dim watermarkText As String = ""
 
                 ' to avoid GIF image issues, create a new blank canvas and copy the image.
@@ -229,7 +229,7 @@ Namespace DotNetNuke.Modules.Repository
                     Dim StringSizeF As SizeF, DesiredWidth As Single, wmFont As Font, RequiredFontSize As Single, Ratio As Single
                     wmFont = New Font("Verdana", 6, FontStyle.Bold)
                     DesiredWidth = fullSizeImg.Width * 0.75
-                    
+
                     StringSizeF = canvas.MeasureString(watermarkText, wmFont)
                     Ratio = StringSizeF.Width / wmFont.SizeInPoints
                     RequiredFontSize = DesiredWidth / Ratio
@@ -256,7 +256,7 @@ Namespace DotNetNuke.Modules.Repository
                         stmMemory.WriteTo(Response.OutputStream)
                 End Select
             End If
-
+            'DotNetNuke.Instrumentation.DnnLog.Debug("MakeThumbnail.Page_Load 2")
         End Sub
 
 #End Region

@@ -19,7 +19,7 @@ Namespace DotNetNuke.Modules.Repository
             Return CBO.FillCollection(DataProvider.Instance().GetRepositoryCategories(ModuleId, RootID), GetType(RepositoryCategoryInfo))
         End Function
         Public Function GetSingleRepositoryCategory(ByVal ItemId As Integer) As RepositoryCategoryInfo
-            Return CType(CBO.FillObject(DataProvider.Instance().GetSingleRepositoryCategory(ItemId), GetType(RepositoryCategoryInfo)), RepositoryCategoryInfo)
+            Return CBO.FillObject(Of RepositoryCategoryInfo)(DataProvider.Instance().GetSingleRepositoryCategory(ItemId))
         End Function
         Public Function AddRepositoryCategory(ByVal ItemId As Integer, ByVal ModuleId As Integer, ByVal CategoryName As String, ByVal Parent As Integer, ByVal ViewOrder As Integer) As Integer
             Return CType(DataProvider.Instance().AddRepositoryCategory(ItemId, ModuleId, CategoryName, Parent, ViewOrder), Integer)

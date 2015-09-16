@@ -179,7 +179,7 @@ Namespace DotNetNuke.Modules.Repository
             ' Obtain PortalSettings from Current Context
             Dim mc As New ModuleController
             Dim _portalSettings As PortalSettings = CType(HttpContext.Current.Items("PortalSettings"), PortalSettings)
-            Dim settings As Hashtable = mc.GetModuleSettings(ModuleID)
+            Dim settings As Hashtable = Helpers.GetModSettings(ModuleID)
 
             strTargetFolder = GetTargetFolder(ModuleID, pRepository)
 
@@ -336,7 +336,7 @@ Namespace DotNetNuke.Modules.Repository
                             If Not objAdministrator Is Nothing Then
                                 strBody = objAdministrator.DisplayName & "," & vbCrLf & vbCrLf
                                 strBody = strBody & "A file has been uploaded/changed to " & _portalSettings.PortalName & " and is waiting for your Approval." & vbCrLf & vbCrLf
-                                strBody = strBody & "Portal Website Address: " & DotNetNuke.Common.Globals.GetPortalDomainName(_portalSettings.PortalAlias.HTTPAlias, HttpContext.Current.Request) & vbCrLf
+                                strBody = strBody & "Portal Website Address: " & DotNetNuke.Common.Globals.GetPortalDomainName(_portalSettings.PortalAlias.HTTPAlias, HttpContext.Current.Request, True) & vbCrLf
                                 strBody = strBody & "Username: " & pRepository.Author & vbCrLf
                                 strBody = strBody & "User's email address: " & pRepository.AuthorEMail & vbCrLf
                                 strBody = strBody & "File Uploaded: " & strFileName & vbCrLf & vbCrLf
@@ -353,7 +353,7 @@ Namespace DotNetNuke.Modules.Repository
 
         End Function
 
-        Public Function GetSkinAttribute(ByVal xDoc As XmlDocument, ByVal tag As String, ByVal attrib As String, ByVal defaultValue As String)
+        Public Function GetSkinAttribute(ByVal xDoc As XmlDocument, ByVal tag As String, ByVal attrib As String, ByVal defaultValue As String) As String
             Dim retValue As String = defaultValue
             Dim xmlSkinAttributeRoot As XmlNode = xDoc.SelectSingleNode("descendant::Object[Token='[" & tag & "]']")
             If Not xmlSkinAttributeRoot Is Nothing Then
@@ -375,7 +375,7 @@ Namespace DotNetNuke.Modules.Repository
             Dim _portalSettings As PortalSettings = CType(HttpContext.Current.Items("PortalSettings"), PortalSettings)
 
             ' Get settings from the database 
-            Dim settings As Hashtable = _portalSettings.GetModuleSettings(ModuleId)
+            Dim settings As Hashtable = Helpers.GetModSettings(ModuleId)
 
             If CType(settings("userfolders"), String) <> "" Then
                 g_UserFolders = Boolean.Parse(CType(settings("userfolders"), String))
@@ -588,7 +588,7 @@ Namespace DotNetNuke.Modules.Repository
 
         Public Function IsModerator(ByVal pid As Integer, ByVal mid As Integer) As Boolean
             Dim _portalSettings As PortalSettings = CType(HttpContext.Current.Items("PortalSettings"), PortalSettings)
-            Dim settings As Hashtable = PortalSettings.GetModuleSettings(mid)
+            Dim settings As Hashtable = Helpers.GetModSettings(mid)
             Dim ModerateRoles As String = ""
             Dim oRepositoryController As New Helpers
 
@@ -605,7 +605,7 @@ Namespace DotNetNuke.Modules.Repository
 
         Public Function IsTrusted(ByVal pid As Integer, ByVal mid As Integer) As Boolean
             Dim _portalSettings As PortalSettings = CType(HttpContext.Current.Items("PortalSettings"), PortalSettings)
-            Dim settings As Hashtable = PortalSettings.GetModuleSettings(mid)
+            Dim settings As Hashtable = Helpers.GetModSettings(mid)
             Dim TrustedRoles As String = ""
             Dim oRepositoryController As New Helpers
 
@@ -621,7 +621,7 @@ Namespace DotNetNuke.Modules.Repository
         End Function
 
         Public Function IsURL(ByVal item As String) As Boolean
-            If item.ToLower.StartsWith("http:") Or item.ToLower.StartsWith("https:") Or item.ToLower.StartsWith("ftp:") Or item.ToLower.StartsWith("mms:") Then
+            If item.ToLower.StartsWith("http:") Xor item.ToLower.StartsWith("https:") Xor item.ToLower.StartsWith("ftp:") Xor item.ToLower.StartsWith("mms:") Then
                 Return True
             Else
                 Return False
@@ -672,7 +672,6 @@ Namespace DotNetNuke.Modules.Repository
         Public Sub AddCategoryToTreeObject(ByVal moduleid As Integer, ByVal itemid As Integer, ByVal arr As ArrayList, ByVal obj As Object, ByVal prefix As String, ByVal showCount As Boolean)
             Dim cc As New RepositoryObjectCategoriesController
             Dim cv As RepositoryObjectCategoriesInfo = Nothing
-            Dim objItem As ListItem
             Dim arr2 As ArrayList
             Dim cController As New RepositoryCategoryController
 
@@ -697,6 +696,8 @@ Namespace DotNetNuke.Modules.Repository
                 arr2 = cController.GetRepositoryCategories(moduleid, cat.ItemId)
                 If arr2.Count > 0 Then
                     AddCategoryToTreeObject(moduleid, itemid, arr2, newNode, "", showCount)
+                Else
+                    'DotNetNuke.Instrumentation.DnnLogger.GetLogger("RepositoryDashboard").Debug("arr2.Count: " & arr2.Count)
                 End If
             Next
         End Sub
@@ -788,7 +789,9 @@ Namespace DotNetNuke.Modules.Repository
 
         Public Shared Function GetModSettings(mid As Integer) As Hashtable
             Dim mc As New ModuleController()
-            Return mc.GetModuleSettings(mid)
+            Dim mi As ModuleInfo = mc.GetModule(mid, DotNetNuke.Common.Utilities.Null.NullInteger, False)
+            Return mi.ModuleSettings
+            'Return mc.GetModuleSettings(mid)
         End Function
 
         Public Function ChangeValue(ByVal oldUrl As String, ByVal qsName As String, ByVal newValue As String, Optional ByVal del As Integer = 0) As String
@@ -851,7 +854,6 @@ Namespace DotNetNuke.Modules.Repository
         Public Sub DownloadFile(ByVal ItemID As String, ByVal target As String)
             Dim repository As New RepositoryController
             Dim objRepository As RepositoryInfo
-            Dim i, iExtension As Integer
             Dim iStart As Integer = 0
             Dim iEnd As Integer = 0
             Dim strDownloadURL As String = ""
@@ -866,6 +868,13 @@ Namespace DotNetNuke.Modules.Repository
                 ' 2. Repository File    
                 ' 3. File system file   FileId=nn
                 ' 4. Page on the site   nn
+
+                ''If HttpContext.Current.User.Identity.IsAuthenticated Then
+                'Dim userInfo As UserInfo
+                'userInfo = DotNetNuke.Entities.Users.UserController.GetCurrentUserInfo()
+                'HttpContext.Current.Response.AppendToLog("User " & userInfo.Username & " Downloaded " & objRepository.FileName)
+
+                ''End If
 
                 If IsURL(objRepository.FileName) Then
                     strDownloadURL = objRepository.FileName
@@ -1005,10 +1014,10 @@ Namespace DotNetNuke.Modules.Repository
         Private Function GetTargetFolder(ByVal moduleid As Integer, ByVal pRepository As RepositoryInfo) As String
             Dim strTargetFolder As String = ""
             Dim _portalSettings As PortalSettings = CType(HttpContext.Current.Items("PortalSettings"), PortalSettings)
-            Dim settings As Hashtable = PortalSettings.GetModuleSettings(moduleid)
+            Dim settings As Hashtable = Helpers.GetModSettings(moduleid)
 
             Dim userInfo As UserInfo
-            userInfo = DotNetNuke.Entities.Users.UserController.GetCurrentUserInfo()
+            userInfo = DotNetNuke.Entities.Users.UserController.Instance.GetCurrentUserInfo()
 
             SetRepositoryFolders(moduleid)
 
@@ -1319,7 +1328,7 @@ Namespace DotNetNuke.Modules.Repository
                 objRepository.RatingVotes = pRepository.RatingVotes
                 repository.UpdateRepositoryObject(objRepository.ItemId, userInfo.UserID.ToString(), objRepository)
                 ' now write the Categories to the grmRepositoryObjectCategories table
-                repositoryObjectCategories.DeleteRepositoryObjectCategories(objRepository.ItemId)
+                RepositoryObjectCategoriesController.DeleteRepositoryObjectCategories(objRepository.ItemId)
                 aCategories = strCategories.Split(";")
                 For Each sItem In aCategories
                     If sItem <> "" Then
@@ -1330,7 +1339,7 @@ Namespace DotNetNuke.Modules.Repository
                     End If
                 Next
                 ' and finally write the Attibute Values to the grmRepositoryObjectValues table
-                repositoryObjectValues.DeleteRepositoryObjectValues(objRepository.ItemId)
+                RepositoryObjectValuesController.DeleteRepositoryObjectValues(objRepository.ItemId)
                 aCategories = strAttributes.Split(";")
                 For Each sItem In aCategories
                     If sItem <> "" Then
@@ -1344,7 +1353,7 @@ Namespace DotNetNuke.Modules.Repository
 
         End Function
 
-        Private Function MoveFolder(ByVal oldFolder As String, ByVal newFolder As String)
+        Private Function MoveFolder(ByVal oldFolder As String, ByVal newFolder As String) As String
 
             Dim results As String = ""
 

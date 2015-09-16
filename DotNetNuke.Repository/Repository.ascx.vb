@@ -160,7 +160,7 @@ Namespace DotNetNuke.Modules.Repository
 #Region "Event Handlers"
 
         Private Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-
+            'DotNetNuke.Instrumentation.DnnLog.Debug("Page_Load 1")
             If ViewState("mFilter") IsNot Nothing Then
                 mFilter = ViewState("mFilter")
             End If
@@ -334,7 +334,7 @@ Namespace DotNetNuke.Modules.Repository
             ViewState("mAttributes") = oRepositoryBusinessController.g_Attributes
             ViewState("mPage") = CType(lstObjects.CurrentPageIndex, String)
             ViewState("mView") = mView
-
+            'DotNetNuke.Instrumentation.DnnLog.Debug("Page_Load 2")
         End Sub
 
         Private Sub lstObjects_ItemCreated(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles lstObjects.ItemCreated
@@ -438,9 +438,12 @@ Namespace DotNetNuke.Modules.Repository
 
                 Case "Download"
                     IncrementDownloads(e.CommandArgument)
+
                     Dim target As String = oRepositoryBusinessController.GetSkinAttribute(xmlDoc, "DOWNLOAD", "Target", "NEW")
+
                     oRepositoryBusinessController.DownloadFile(e.CommandArgument, target)
 
+                    SendMail(objRepository)
                 Case "PostComment"
                     Dim objCommentsPanel As Panel
                     Dim txtName As TextBox
@@ -654,6 +657,9 @@ Namespace DotNetNuke.Modules.Repository
                 Case "Download"
                     IncrementDownloads(e.CommandArgument)
                     Dim target As String = oRepositoryBusinessController.GetSkinAttribute(xmlDoc, "DOWNLOAD", "Target", "NEW")
+
+                    SendMail(objRepository)
+
                     oRepositoryBusinessController.DownloadFile(e.CommandArgument, target)
 
                 Case "PostComment"
@@ -708,6 +714,23 @@ Namespace DotNetNuke.Modules.Repository
 
             End Select
 
+        End Sub
+
+        Private Sub SendMail(ByVal objRepository As RepositoryInfo)
+            Try
+
+                ' construct your email body
+                Dim strBody As String = "On " & Date.Now() & " " & UserInfo.DisplayName & " (" & UserInfo.Email & ")" & " downloaded " & objRepository.Name & " (" & objRepository.FileName & ") " _
+                                        & Me.Request.UserHostAddress
+
+                ' send the email to the original author
+                DotNetNuke.Services.Mail.Mail.SendMail(PortalSettings.Email, objRepository.AuthorEMail, _
+                  "", "", Services.Mail.MailPriority.Normal, "Repository: " & UserInfo.DisplayName & " has downloaded " & objRepository.Name, _
+                  Services.Mail.MailFormat.Text, System.Text.Encoding.Default, strBody, "", "", "", "", "")
+
+            Catch ex As Exception
+
+            End Try
         End Sub
 
         Private Sub DataList1_ItemDataBound(ByVal sender As Object, ByVal e As DataListItemEventArgs) Handles DataList1.ItemDataBound
@@ -1016,7 +1039,7 @@ Namespace DotNetNuke.Modules.Repository
                                                 ' first get default format
                                                 Dim strFormat As String = oRepositoryBusinessController.GetSkinAttribute(xmlDoc, "CREATEDDATE", "DateFormat", "")
                                                 If HttpContext.Current.Request.IsAuthenticated Then
-                                                    Dim objUser As UserInfo = UserController.GetCurrentUserInfo
+                                                    Dim objUser As UserInfo = UserController.Instance.GetCurrentUserInfo()
                                                     Dim UserTime As New Entities.Users.UserTime
                                                     dtDate = UserTime.ConvertToServerTime(dtDate, objUser.Profile.TimeZone)
                                                     ' check to see if there is a special format for the user's country
@@ -1043,7 +1066,7 @@ Namespace DotNetNuke.Modules.Repository
                                                 dtDate = objRepository.UpdatedDate
                                                 Dim strFormat As String = oRepositoryBusinessController.GetSkinAttribute(xmlDoc, "UPDATEDDATE", "DateFormat", "")
                                                 If HttpContext.Current.Request.IsAuthenticated Then
-                                                    Dim objUser As UserInfo = UserController.GetCurrentUserInfo
+                                                    Dim objUser As UserInfo = UserController.Instance.GetCurrentUserInfo
                                                     Dim UserTime As New Entities.Users.UserTime
                                                     dtDate = UserTime.ConvertToServerTime(dtDate, objUser.Profile.TimeZone)
                                                     ' check to see if there is a special format for the user's country
@@ -1325,7 +1348,7 @@ Namespace DotNetNuke.Modules.Repository
                                                 objPlaceHolder.Controls.Add(objHyperlink)
                                             Case "CURRENTUSER"
                                                 If HttpContext.Current.User.Identity.IsAuthenticated Then
-                                                    Dim objUser As UserInfo = UserController.GetCurrentUserInfo
+                                                    Dim objUser As UserInfo = UserController.Instance.GetCurrentUserInfo
                                                     Dim userProp As String = oRepositoryBusinessController.GetSkinAttribute(xmlDoc, "CURRENTUSER", "Property", "DisplayName")
                                                     Select Case userProp.ToLower()
                                                         Case "userid"
@@ -1347,7 +1370,7 @@ Namespace DotNetNuke.Modules.Repository
                                                 End If
                                             Case "USERPROFILE"
                                                 If HttpContext.Current.User.Identity.IsAuthenticated Then
-                                                    Dim objUser As UserInfo = UserController.GetCurrentUserInfo
+                                                    Dim objUser As UserInfo = UserController.Instance.GetCurrentUserInfo
                                                     Dim userProp As String = oRepositoryBusinessController.GetSkinAttribute(xmlDoc, "USERPROFILE", "Property", "FullName")
                                                     Select Case userProp.ToLower()
                                                         Case "cell"
@@ -1543,14 +1566,13 @@ Namespace DotNetNuke.Modules.Repository
 #Region "Private functions and Subs"
 
         Private Sub BindObjectList()
-
+            'DotNetNuke.Instrumentation.DnnLog.Debug("BindObjectList 1")
             Dim objRepository As New RepositoryController
             Dim objUploads As New RepositoryController
             Dim repositoryItems As System.Collections.ArrayList
             Dim bindableList As System.Collections.ArrayList
             Dim iModerateCount As Integer = 0
             Dim ds As New DataSet
-            Dim dv As DataView
             Dim searchString As String = ""
             Dim items As ArrayList
 
@@ -1608,7 +1630,7 @@ Namespace DotNetNuke.Modules.Repository
                     Next
 
                 Else
-
+                    Dim isAdministrator As Boolean = PortalSecurity.IsInRole("Administrators")
                     For Each dataitem As RepositoryInfo In repositoryItems
 
                         If dataitem.SecurityRoles Is Nothing Then
@@ -1620,7 +1642,7 @@ Namespace DotNetNuke.Modules.Repository
                             If dataitem.SecurityRoles.StartsWith("U:") Then
                                 Dim _targetUser As String = dataitem.SecurityRoles.Substring(2)
                                 ' admins see all items
-                                If _targetUser = "" Or PortalSecurity.IsInRole("Administrators") Then
+                                If _targetUser = "" Or isAdministrator Then
                                     bindableList.Add(dataitem)
                                 Else
                                     If HttpContext.Current.User.Identity.IsAuthenticated Then
@@ -1644,8 +1666,9 @@ Namespace DotNetNuke.Modules.Repository
                     Next
 
                 End If
+                Dim viewStatee As String = ViewState("mView")
 
-                Select Case ViewState("mView")
+                Select Case viewStatee
 
                     Case "Details"
                         DataList1.Visible = True
@@ -1673,7 +1696,7 @@ Namespace DotNetNuke.Modules.Repository
 
             ParseHeaderTemplate()
             ParseFooterTemplate()
-
+            'DotNetNuke.Instrumentation.DnnLog.Debug("BindObjectList 2")
         End Sub
 
         Public Function FormatDate(ByVal objDate As Date) As String
@@ -1751,6 +1774,7 @@ Namespace DotNetNuke.Modules.Repository
                     If Not String.IsNullOrEmpty(Item) Then
                         If PortalSecurity.IsInRole(Item) Then
                             found = True
+                            Continue For
                         End If
                     End If
                 Next
@@ -1787,7 +1811,6 @@ Namespace DotNetNuke.Modules.Repository
 
             Dim delimStr As String = "[]"
             Dim delimiter As Char() = delimStr.ToCharArray()
-            Dim sr As System.IO.StreamReader
 
             ' --- load various templates for the current skin
             m_results = oRepositoryBusinessController.LoadTemplate(strTemplateName, "template", xmlDoc, aTemplate)
@@ -1806,8 +1829,8 @@ Namespace DotNetNuke.Modules.Repository
         End Sub
 
         Private Sub ParseHeaderTemplate()
-
-            Dim iPtr, i As Integer
+            'DotNetNuke.Instrumentation.DnnLog.Debug("ParseHeaderTemplate 1")
+            Dim iPtr As Integer
             Dim isRss As Boolean
             Dim sTag As String
             Dim attributes As New RepositoryAttributesController
@@ -1963,9 +1986,7 @@ Namespace DotNetNuke.Modules.Repository
                                                 End If
                                             Case "CATEGORIES"
                                                 Dim controltype As String = oRepositoryBusinessController.GetSkinAttribute(xmlHeaderDoc, "CATEGORIES", "ControlType", "DropDownList")
-                                                Dim objItem As ListItem
                                                 Dim categories As New System.Collections.ArrayList
-                                                Dim category As RepositoryCategoryInfo
                                                 Dim categoryController As New RepositoryCategoryController
                                                 categories = categoryController.GetRepositoryCategories(ModuleId, -1)
                                                 Select Case controltype
@@ -2118,12 +2139,12 @@ Namespace DotNetNuke.Modules.Repository
                 Next
             Catch ex As Exception
             End Try
-
+            'DotNetNuke.Instrumentation.DnnLog.Debug("ParseHeaderTemplate 2")
         End Sub
 
         Private Sub ParseFooterTemplate()
-
-            Dim iPtr, i As Integer
+            'DotNetNuke.Instrumentation.DnnLog.Debug("ParseFooterTemplate 1")
+            Dim iPtr As Integer
             Dim sTag As String
 
             fPlaceHolder.Controls.Clear()
@@ -2261,11 +2282,11 @@ Namespace DotNetNuke.Modules.Repository
                 Next
             Catch ex As Exception
             End Try
-
+            DotNetNuke.Instrumentation.DnnLog.Debug("ParseFooterTemplate 2")
         End Sub
 
         Private Sub ParseRatingTemplate(ByVal pRepository As RepositoryInfo)
-
+            'DotNetNuke.Instrumentation.DnnLog.Debug("ParseRatingTemplate 1")
             Dim iPtr, i As Integer
             Dim sTag As String
 
@@ -2373,11 +2394,11 @@ Namespace DotNetNuke.Modules.Repository
                 Next
             Catch ex As Exception
             End Try
-
+            'DotNetNuke.Instrumentation.DnnLog.Debug("ParseRatingTemplate 2")
         End Sub
 
         Private Sub ParseCommentTemplate(ByVal pRepository As RepositoryInfo)
-
+            'DotNetNuke.Instrumentation.DnnLog.Debug("ParseCommentTemplate 1")
             Dim iPtr As Integer
             Dim sTag As String
 
@@ -2533,7 +2554,7 @@ Namespace DotNetNuke.Modules.Repository
                 Next
             Catch ex As Exception
             End Try
-
+            'DotNetNuke.Instrumentation.DnnLog.Debug("ParseCommentTemplate 2")
         End Sub
 
 #End Region

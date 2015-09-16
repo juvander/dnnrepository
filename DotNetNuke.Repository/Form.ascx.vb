@@ -88,6 +88,7 @@ Namespace DotNetNuke.Modules.Repository
 #Region "Event Handlers"
 
         Private Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+            'DotNetNuke.Instrumentation.DnnLog.Debug("Form.Page_Load 1")
             Dim settings As Hashtable = Helpers.GetModSettings(ModuleId)
             Dim UploadRoles As String = ""
             Dim bCanDelete As Boolean = False
@@ -199,7 +200,7 @@ Namespace DotNetNuke.Modules.Repository
             If Not Page.IsPostBack Then
                 ViewState("_returnURL") = Request.UrlReferrer.AbsoluteUri
             End If
-
+            'DotNetNuke.Instrumentation.DnnLog.Debug("Form.Page_Load 2")
         End Sub
 
 #End Region
@@ -575,9 +576,7 @@ Namespace DotNetNuke.Modules.Repository
                                                 PlaceHolder.Controls.Add(objButton)
                                             Case "CATEGORIES"
                                                 Dim categories As New RepositoryCategoryController
-                                                Dim category As RepositoryCategoryInfo
                                                 Dim repositoryObjectCategories As New RepositoryObjectCategoriesController
-                                                Dim repositoryObjectCategory As RepositoryObjectCategoriesInfo
                                                 Dim obj As Object
                                                 ' get control type for categories
                                                 Dim controlType As String = oRepositoryBusinessController.GetSkinAttribute(xmlDoc, "Categories", "Select", "MULTIPLE")
@@ -849,9 +848,7 @@ Namespace DotNetNuke.Modules.Repository
         End Sub
 
         Private Sub btnUpload_Click(ByVal sender As Object, ByVal e As System.EventArgs)
-            Dim strDownload, strImage
             Dim strMessage As String = ""
-            Dim strRepositoryFolder As String
             Dim strCategories As String
             Dim strAttributes As String
             Dim objSecurity As New DotNetNuke.Security.PortalSecurity
@@ -954,7 +951,6 @@ Namespace DotNetNuke.Modules.Repository
 
                 strCategories = ";"
                 Dim categories As New RepositoryCategoryController
-                Dim category As RepositoryCategoryInfo
                 Dim objItem As ListItem
                 Dim obj As Object
 
@@ -1014,7 +1010,6 @@ Namespace DotNetNuke.Modules.Repository
                 Dim attributes As New RepositoryAttributesController
                 Dim attribute As RepositoryAttributesInfo
                 Dim attributeValues As New RepositoryAttributeValuesController
-                Dim attributeValue As RepositoryAttributeValuesInfo
 
                 ' get selection type for the ATTRIBUTE
                 controlType = oRepositoryBusinessController.GetSkinAttribute(xmlDoc, "ATTRIBUTES", "Select", "MULTIPLE")
@@ -1150,8 +1145,7 @@ Namespace DotNetNuke.Modules.Repository
                     End Try
 
                     ' remove the file from all categories
-                    Dim oCategoryController As New RepositoryObjectCategoriesController
-                    oCategoryController.DeleteRepositoryObjectCategories(itemId)
+                    RepositoryObjectCategoriesController.DeleteRepositoryObjectCategories(itemId)
 
                 End If
 
