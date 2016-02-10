@@ -96,23 +96,21 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DotNetNuke">
-      <HintPath>..\www.juvander.fi.SRC\bin\DotNetNuke.dll</HintPath>
+    <Reference Include="DotNetNuke, Version=8.0.0.809, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Library\DotNetNuke.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetNuke.Instrumentation">
-      <HintPath>..\www.juvander.fi.SRC\bin\DotNetNuke.Instrumentation.dll</HintPath>
+    <Reference Include="DotNetNuke.Instrumentation, Version=8.0.0.809, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Library\DotNetNuke.Instrumentation.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetNuke.Log4Net">
-      <HintPath>..\www.juvander.fi.SRC\bin\DotNetNuke.Log4Net.dll</HintPath>
+    <Reference Include="DotNetNuke.WebControls, Version=2.4.0.598, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Library\DotNetNuke.WebControls.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetNuke.Web.Client">
-      <HintPath>..\www.juvander.fi.SRC\bin\DotNetNuke.Web.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetNuke.WebControls">
-      <HintPath>..\www.juvander.fi.SRC\bin\DotNetNuke.WebControls.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetNuke.WebUtility">
-      <HintPath>..\www.juvander.fi.SRC\bin\DotNetNuke.WebUtility.dll</HintPath>
+    <Reference Include="DotNetNuke.WebUtility, Version=4.2.0.185, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Library\DotNetNuke.WebUtility.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -201,7 +199,9 @@
     <Content Include="RepositoryDashboard.ascx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
-    <Content Include="Settings.ascx" />
+    <Content Include="Settings.ascx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Compile Include="About.ascx.vb">
       <DependentUpon>About.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

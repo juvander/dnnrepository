@@ -100,10 +100,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Library\DotNetNuke.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetNuke.Provider.DNNProvider, Version=5.6.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Library\DotNetNuke.Provider.DNNProvider.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.ApplicationBlocks.Data, Version=2.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\bin\Microsoft.ApplicationBlocks.Data.dll</HintPath>
