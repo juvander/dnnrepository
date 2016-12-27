@@ -1,14 +1,14 @@
 ﻿<dotnetnuke type="Package" version="5.0">
   <packages>
-	  <package name="DotNetNuke.Repository" type="Module" version="03.05.06">
+	  <package name="DotNetNuke.Repository" type="Module" version="03.05.07">
   <friendlyName>Repository</friendlyName>
-  <description>A file/object repository module that includes skinning and community features like comments and user ratings.</description>
-  <vendor>
-    <name>DotNetNuke</name>
-    <organization>DotNetNuke Corporation</organization>
-    <url>www.dotnetnuke.com</url>
-    <email>support@dotnetnuke.com</email>
-  </vendor>
+  <description>A file/object repository module that includes skinning and community features like comments and user ratings.</description>  
+			<owner>
+				<name>Repository Module Project</name>
+				<organization>DotNetNuke Corporation</organization>
+				<url>https://github.com/juvander/dnnrepository</url>
+				<email>ilpo.juvander@hotmail.com</email>
+			</owner>
   <license>DotNetNuke� - http://www.dotnetnuke.com&lt;br/&gt;
 Copyright (c) 2002-2011&lt;br/&gt;
 by DotNetNuke Corporation
@@ -45,90 +45,13 @@ DEALINGS IN THE SOFTWARE.</license>
 		<basePath>bin</basePath>
         <assembly>
           <name>DotNetNuke.Modules.Repository.dll</name>
-          <version>03.05.06</version>
+          <version>03.05.07</version>
         </assembly>
         <assembly>
           <name>DotNetNuke.Modules.Repository.SqlDataProvider.dll</name>
-          <version>03.05.06</version>
+          <version>03.05.07</version>
         </assembly>
       </assemblies>
-    </component>
-    <component type="File">
-      <files>
-        <basePath>DesktopModules\Repository</basePath>
-        <file>
-          <path>App_LocalResources</path>
-          <name>About.ascx.resx</name>
-        </file>
-        <file>
-          <path>App_LocalResources</path>
-          <name>Form.ascx.resx</name>
-        </file>
-        <file>
-          <path>App_LocalResources</path>
-          <name>ModerateUploads.ascx.resx</name>
-        </file>
-        <file>
-          <path>App_LocalResources</path>
-          <name>Repository.ascx.resx</name>
-        </file>
-        <file>
-          <path>App_LocalResources</path>
-          <name>Settings.ascx.resx</name>
-        </file>
-        <file>
-          <name>About.ascx</name>
-        </file>
-        <file>
-          <name>EditComment.ascx</name>
-        </file>
-        <file>
-          <name>Form.ascx</name>
-        </file>
-        <file>
-          <name>MakeThumbnail.aspx</name>
-        </file>
-        <file>
-          <name>ModerateUploads.ascx</name>
-        </file>
-        <file>
-          <name>module.css</name>
-        </file>
-        <file>
-          <name>Repository.ascx</name>
-        </file>
-        <file>
-          <name>Settings.ascx</name>
-        </file>
-        <file>
-          <name>icon_repository_32px.gif</name>
-        </file>
-        <file>
-          <name>03.05.06.txt</name>
-        </file>
-      </files>
-    </component>
-    <component type="File">
-      <files>
-        <basePath>DesktopModules\Dashboard</basePath>
-        <file>
-          <name>DashboardSettings.ascx</name>
-        </file>
-        <file>
-          <name>RepositoryDashboard.ascx</name>
-        </file>
-        <file>
-          <name>icon_repository_32px.gif</name>
-        </file>
-        <file>
-          <path>App_LocalResources</path>
-          <name>RepositoryDashboard.ascx.resx</name>
-        </file>
-        <file>
-          <path>App_LocalResources</path>
-          <name>DashboardSettings.ascx.resx</name>
-        </file>
-      </files>
     </component>
     <component type="Script">
       <scripts>
@@ -299,7 +222,7 @@ DEALINGS IN THE SOFTWARE.</license>
 		</script>
 		<script type="UnInstall">
 			<name>Uninstall.SqlDataProvider</name>
-			<version>03.05.06</version>
+			<version>03.05.07</version>
 		</script>
       </scripts>
     </component>
@@ -393,17 +316,57 @@ DEALINGS IN THE SOFTWARE.</license>
         </moduleDefinitions>
       </desktopModule>
     </component>
+  <component type="Cleanup" version="03.05.07">
+  <files>
+    <file>
+      <path>DesktopModules\Dashboard\App_LocalResources</path>
+      <name>Dashboard.ascx.resx</name>
+    </file>
+    <file>
+      <path>DesktopModules\Dashboard\App_LocalResources</path>
+      <name>DashboardSettings.ascx.resx</name>
+    </file>
+    <file>
+      <path>DesktopModules\Dashboard\App_LocalResources</path>
+      <name>RepositoryDashboard.ascx.resx</name>
+    </file>
+    <file>
+      <path>DesktopModules\Dashboard</path>
+      <name>App_LocalResources</name>
+    </file>
+    <file>
+      <path>DesktopModules\Dashboard</path>
+      <name>DashboardSettings.ascx</name>
+    </file>
+    <file>
+      <path>DesktopModules\Dashboard</path>
+      <name>icon_repository_32px.gif</name>
+    </file>
+    <file>
+      <path>DesktopModules\Dashboard</path>
+      <name>RepositoryDashboard.ascx</name>
+    </file>
+    <file>
+      <path>DesktopModules\Dashboard</path>
+      <name>App_LocalResources</name>
+    </file>
+    <file>
+      <path>DesktopModules</path>
+      <name>Dashboard</name>
+    </file>
+  </files>
+</component>
   </components>
 </package>
 
-<package name="DotNetNuke.Repository.Dashboard" type="Module" version="03.05.06">
+<package name="DotNetNuke.Repository.Dashboard" type="Module" version="03.05.07">
   <friendlyName>Repository Dashboard</friendlyName>
   <description></description>
   <vendor></vendor>
   <license></license>
   <releaseNotes></releaseNotes>
   <dependencies>
-	  <dependency type="CoreVersion">05.03.01</dependency>
+	  <dependency type="CoreVersion">07.00.00</dependency>
   </dependencies>
   <components>
 	  <component type="Module">
@@ -417,7 +380,7 @@ DEALINGS IN THE SOFTWARE.</license>
 					  <moduleControls>
 						  <moduleControl>
 							  <controlKey />
-							  <controlSrc>DesktopModules/Dashboard/RepositoryDashboard.ascx</controlSrc>
+							  <controlSrc>DesktopModules/Repository/RepositoryDashboard.ascx</controlSrc>
 							  <supportsPartialRendering>False</supportsPartialRendering>
 							  <controlTitle />
 							  <controlType>View</controlType>
@@ -427,7 +390,7 @@ DEALINGS IN THE SOFTWARE.</license>
 						  </moduleControl>
 						  <moduleControl>
 							  <controlKey>Settings</controlKey>
-							  <controlSrc>DesktopModules/Dashboard/DashboardSettings.ascx</controlSrc>
+							  <controlSrc>DesktopModules/Repository/DashboardSettings.ascx</controlSrc>
 							  <supportsPartialRendering>False</supportsPartialRendering>
 							  <controlTitle />
 							  <controlType>Admin</controlType>
