@@ -83,26 +83,22 @@ Namespace DotNetNuke.Modules.Repository
 #Region "Public Functions and Subs"
 
         Public Function ConvertFileIDtoPath(ByVal pid As Integer, ByVal fid As Integer) As String
-            Dim fc As New DotNetNuke.Services.FileSystem.FileController
-            Dim file As DotNetNuke.Services.FileSystem.FileInfo = fc.GetFileById(fid, pid)
+            Dim file As DotNetNuke.Services.FileSystem.FileInfo = DotNetNuke.Services.FileSystem.FileManager.Instance.GetFile(fid)
             Return file.PhysicalPath
         End Function
 
         Public Function ConvertFileIDtoFileName(ByVal pid As Integer, ByVal fid As Integer) As String
-            Dim fc As New DotNetNuke.Services.FileSystem.FileController
-            Dim file As DotNetNuke.Services.FileSystem.FileInfo = fc.GetFileById(fid, pid)
+            Dim file As DotNetNuke.Services.FileSystem.FileInfo = DotNetNuke.Services.FileSystem.FileManager.Instance.GetFile(fid)
             Return file.FileName
         End Function
 
         Public Function ConvertFileIDtoExtension(ByVal pid As Integer, ByVal fid As Integer) As String
-            Dim fc As New DotNetNuke.Services.FileSystem.FileController
-            Dim file As DotNetNuke.Services.FileSystem.FileInfo = fc.GetFileById(fid, pid)
+            Dim file As DotNetNuke.Services.FileSystem.FileInfo = DotNetNuke.Services.FileSystem.FileManager.Instance.GetFile(fid)
             Return file.Extension
         End Function
 
         Public Function ConvertFileIDtoFile(ByVal pid As Integer, ByVal fid As Integer) As DotNetNuke.Services.FileSystem.FileInfo
-            Dim fc As New DotNetNuke.Services.FileSystem.FileController
-            Dim file As DotNetNuke.Services.FileSystem.FileInfo = fc.GetFileById(fid, pid)
+            Dim file As DotNetNuke.Services.FileSystem.FileInfo = DotNetNuke.Services.FileSystem.FileManager.Instance.GetFile(fid)
             Return file
         End Function
 
@@ -1052,7 +1048,7 @@ Namespace DotNetNuke.Modules.Repository
             Dim objSecurity As New DotNetNuke.Security.PortalSecurity
 
             Dim userInfo As UserInfo
-            userInfo = DotNetNuke.Entities.Users.UserController.GetCurrentUserInfo()
+            userInfo = DotNetNuke.Entities.Users.UserController.Instance.GetCurrentUserInfo()
 
             strTargetFolder = GetTargetFolder(ModuleID, pRepository)
 

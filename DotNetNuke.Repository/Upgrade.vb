@@ -98,14 +98,6 @@ Namespace DotNetNuke.Modules.Repository
 
             Dim m_message As String = ""
             Dim settings As Hashtable
-            Dim m_foldername As String
-            Dim m_Folders() As String
-            Dim m_Folder As String
-            Dim m_userFolder As String
-            Dim m_newFolder As String
-
-            Dim m_userController As New DotNetNuke.Entities.Users.UserController
-            Dim m_userInfo As DotNetNuke.Entities.Users.UserInfo
 
             Try
                 Dim _portalSettings As PortalSettings = CType(HttpContext.Current.Items("PortalSettings"), PortalSettings)
