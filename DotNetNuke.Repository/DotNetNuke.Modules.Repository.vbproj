@@ -203,6 +203,7 @@
     <Content Include="MakeThumbnail.aspx" />
     <Content Include="ModerateUploads.ascx" />
     <Content Include="module.css" />
+    <Content Include="ReleaseNotes.txt" />
     <Content Include="Repository.ascx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>

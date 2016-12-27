@@ -1,0 +1,18 @@
+﻿<h3>Forum 3.5.8</h3>
+<p class="Contributor">
+	Ilpo Juvander<br />
+	<a href="mailto:ilpo.juvander@hotmail.com">ilpo.juvander@hotmail.com</a><br />
+</p>
+<hr/>
+<div class="License">
+	<h3>About the Repository Module</h3>
+	<p class="Owner">
+		<b>Version 3.5.8</b><br /><br />
+		This version of the module requires DotNetNuke Core 7.0.0 or greater. 
+		FYI: Developers should be aware that the module uses Visual Studio 2015 and above. 
+	</p>	
+	<ul>		
+		<li>Making repository paths relative to portal path</li>	
+	</ul
+	
+</div>

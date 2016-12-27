@@ -26,7 +26,7 @@ TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONIN
 THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 DEALINGS IN THE SOFTWARE.</license>
-  <releaseNotes>There are no release notes for this version.</releaseNotes>
+			<releaseNotes src="ReleaseNotes.txt"></releaseNotes>
   <dependencies>
     <dependency type="CoreVersion">05.03.01</dependency>
   </dependencies>
