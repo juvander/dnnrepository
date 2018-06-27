@@ -12,7 +12,8 @@
 		FYI: Developers should be aware that the module uses Visual Studio 2015 and above. 
 	</p>	
 	<ul>		
-		<li>Making repository paths relative to portal path</li>	
+		<li>Making repository paths relative to portal path</li>
+		<li>Fix for Approved path</li>
 	</ul
 	
 </div>
