@@ -383,23 +383,9 @@ Namespace DotNetNuke.Modules.Repository
                 g_UserFolders = True
             End If
 
-            If CType(settings("folderlocation"), String) <> "" Then
-                g_ApprovedFolder = CType(settings("folderlocation"), String)
-            Else
-                g_ApprovedFolder = HttpContext.Current.Server.MapPath(_portalSettings.HomeDirectory) & "Repository"
-            End If
-
-            If CType(settings("pendinglocation"), String) <> "" Then
-                g_UnApprovedFolder = CType(settings("pendinglocation"), String)
-            Else
-                g_UnApprovedFolder = HttpContext.Current.Server.MapPath(_portalSettings.HomeDirectory) & "Repository\Pending"
-            End If
-
-            If CType(settings("anonymouslocation"), String) <> "" Then
-                g_AnonymousFolder = CType(settings("anonymouslocation"), String)
-            Else
-                g_AnonymousFolder = HttpContext.Current.Server.MapPath(_portalSettings.HomeDirectory) & "Repository\Anonymous"
-            End If
+            g_ApprovedFolder = HttpContext.Current.Server.MapPath(_portalSettings.HomeDirectory) & "Repository"
+            g_UnApprovedFolder = HttpContext.Current.Server.MapPath(_portalSettings.HomeDirectory) & "Repository\Pending"
+            g_AnonymousFolder = HttpContext.Current.Server.MapPath(_portalSettings.HomeDirectory) & "Repository\Anonymous"
 
             ' make sure the Repository folder exists
             If Not Directory.Exists(g_ApprovedFolder) Then

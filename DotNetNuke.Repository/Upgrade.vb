@@ -124,31 +124,6 @@ Namespace DotNetNuke.Modules.Repository
                     ' get the module settings
                     settings = Helpers.GetModSettings(objModule.ModuleID)
 
-                    ' if this module is using UserFolders...
-                    If CType(settings("userfolders"), String) <> "" Then
-
-                        ' then get the base folder name
-                        If CType(settings("folderlocation"), String) <> "" Then
-                            m_foldername = CType(settings("folderlocation"), String)
-
-                            ' look in the base folder for any user folders
-                            m_Folders = System.IO.Directory.GetDirectories(m_foldername)
-                            For Each m_Folder In m_Folders
-
-                                m_userFolder = m_Folder.Substring(m_Folder.LastIndexOf("\") + 1)
-                                m_userInfo = Entities.Users.UserController.GetUserByName(objModule.PortalID, m_userFolder)
-
-                                If Not m_userInfo Is Nothing Then
-                                    ' we have a user folder, change the folder name to be the userid
-                                    m_newFolder = m_Folder.Substring(0, m_Folder.LastIndexOf("\") + 1) & m_userInfo.UserID.ToString()
-                                    Directory.Move(m_Folder, m_newFolder)
-                                End If
-
-                            Next
-
-                        End If
-
-                    End If
 
                 Next
 

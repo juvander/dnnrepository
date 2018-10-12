@@ -493,17 +493,8 @@ Namespace DotNetNuke.Modules.Repository
                         cbUserFolders.Checked = False
                     End If
 
-                    If CType(settings("pendinglocation"), String) <> "" Then
-                        txtPendingLocation.Text = CType(settings("pendinglocation"), String)
-                    Else
-                        txtPendingLocation.Text = Request.MapPath(_portalSettings.HomeDirectory) & "Repository"
-                    End If
-
-                    If CType(settings("anonymouslocation"), String) <> "" Then
-                        txtAnonymousLocation.Text = CType(settings("anonymouslocation"), String)
-                    Else
-                        txtAnonymousLocation.Text = Request.MapPath(_portalSettings.HomeDirectory) & "Repository"
-                    End If
+                    txtPendingLocation.Text = Request.MapPath(_portalSettings.HomeDirectory) & "Repository\Pending"
+                    txtAnonymousLocation.Text = Request.MapPath(_portalSettings.HomeDirectory) & "Repository\Anonymous"
 
                     ' only HOST account can modify file locations
                     If UserInfo.IsSuperUser Then
@@ -720,10 +711,7 @@ Namespace DotNetNuke.Modules.Repository
 
                 ' double check to make sure the person submitting the Update is indeed a SuperUser
                 If UserInfo.IsSuperUser Then
-                    objModules.UpdateModuleSetting(ModuleId, "folderlocation", txtFolderLocation.Text.Trim())
                     objModules.UpdateModuleSetting(ModuleId, "userfolders", cbUserFolders.Checked.ToString())
-                    objModules.UpdateModuleSetting(ModuleId, "pendinglocation", txtPendingLocation.Text.Trim())
-                    objModules.UpdateModuleSetting(ModuleId, "anonymouslocation", txtAnonymousLocation.Text.Trim())
                 End If
 
                 objModules.UpdateModuleSetting(ModuleId, "noimage", ctlURL.Url.ToString())
