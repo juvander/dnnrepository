@@ -6,6 +6,7 @@
 *.user
 *.sln.docstates
 .vs/
+
 # Build results
 
 [Dd]ebug/
@@ -15,8 +16,9 @@ build/
 [Bb]in/
 [Oo]bj/
 install/
+Package/
+DNN_Forum_*.zip
 Resources.zip
-.vs/
 
 # Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
 !packages/*/build/
@@ -101,7 +103,7 @@ publish/
 
 # NuGet Packages Directory
 ## TODO: If you have NuGet Package Restore enabled, uncomment the next line
-#packages/
+packages/
 
 # Windows Azure Build Output
 csx
