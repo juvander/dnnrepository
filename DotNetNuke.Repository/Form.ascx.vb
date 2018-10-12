@@ -392,7 +392,6 @@ Namespace DotNetNuke.Modules.Repository
                                                 Dim ImageCtl As DotNetNuke.UI.UserControls.UrlControl = PlaceHolder.FindControl("__URLCTLIMAGE")
                                                 SetURLControlFile(ImageCtl, objRepository, "IMAGE")
                                                 ImageCtl.ShowUpLoad = Boolean.Parse(oRepositoryBusinessController.GetSkinAttribute(xmlDoc, "URLCONTROLIMAGE", "ShowUpLoad", "True"))
-                                                ImageCtl.ShowDatabase = Boolean.Parse(oRepositoryBusinessController.GetSkinAttribute(xmlDoc, "URLCONTROLIMAGE", "ShowDatabase", "True"))
                                                 ImageCtl.ShowTrack = Boolean.Parse(oRepositoryBusinessController.GetSkinAttribute(xmlDoc, "URLCONTROLIMAGE", "ShowTrack", "False"))
                                                 ImageCtl.ShowUsers = Boolean.Parse(oRepositoryBusinessController.GetSkinAttribute(xmlDoc, "URLCONTROLIMAGE", "ShowUsers", "False"))
                                                 ImageCtl.ShowTabs = Boolean.Parse(oRepositoryBusinessController.GetSkinAttribute(xmlDoc, "URLCONTROLIMAGE", "ShowTabs", "False"))
@@ -775,31 +774,32 @@ Namespace DotNetNuke.Modules.Repository
                 ' we have a repository folder item. we need to match it up to the file item.
                 ' if we can't we need to create one
                 Dim dc As New DotNetNuke.Services.FileSystem.FolderController
+
                 Dim di As DotNetNuke.Services.FileSystem.FolderInfo
-                Dim fc As New DotNetNuke.Services.FileSystem.FileController
                 Dim fi As DotNetNuke.Services.FileSystem.FileInfo
 
                 ' make sure the repository folder is registered with the FileSystem and synchronized
                 di = Nothing
-                di = dc.GetFolder(PortalId, "Repository")
+                di = DotNetNuke.Services.FileSystem.FolderManager.Instance.GetFolder(PortalId, "Repository")
                 If di Is Nothing Then
                     ' create the folder item
-                    FolderID = dc.AddFolder(PortalId, "Repository", 0, False, False)
-                    di = dc.GetFolder(PortalId, "Repository")
+
+                    di = DotNetNuke.Services.FileSystem.FolderManager.Instance.AddFolder(PortalId, "Repository")
+
                     ' write a temp file there to update the folder 'lastupdated' date
                     Dim fs As System.IO.FileStream = File.Create(di.PhysicalPath & "REP_TEMP.TXT")
                     fs.Close()
                     ' delete the temp file
                     File.Delete(di.PhysicalPath & "REP_TEMP.TXT")
                     ' synch the folder
-                    DotNetNuke.Common.Utilities.FileSystemUtils.SynchronizeFolder(PortalId, di.PhysicalPath, "Repository", True)
+                    DotNetNuke.Services.FileSystem.FolderManager.Instance.Synchronize(PortalId, "Repository")
                 Else
                     FolderID = di.FolderID
                 End If
 
                 Try
                     ' we now have a Repository folder, now find the file
-                    fi = fc.GetFile(obj, PortalId, FolderID)
+                    fi = DotNetNuke.Services.FileSystem.FileManager.Instance.GetFile(di, obj)
                     If Not fi Is Nothing Then
                         obj = "FileID=" & fi.FileId
                     End If

@@ -351,9 +351,7 @@
     <None Include="DotNetNuke.Repository.dnn">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="My Project\" />
@@ -369,16 +367,17 @@
     <Extension>zip</Extension>
     <DNNFileName>DotNetNuke.Repository</DNNFileName>
     <PackageName>DotNetNuke.Repository</PackageName>
-    <MSBuildCommunityTasksPath>$(SolutionDir)\packages\MSBuildTasks.1.5.0.214\tools</MSBuildCommunityTasksPath>
+    <MSBuildCommunityTasksPath>$(SolutionDir)\packages\MSBuildTasks.1.5.0.235\tools</MSBuildCommunityTasksPath>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('packages\MSBuildTasks.1.5.0.214\build\MSBuildTasks.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\MSBuildTasks.1.5.0.214\build\MSBuildTasks.targets'))" />
+    <Error Condition="!Exists('packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets'))" />
   </Target>
   <Import Project="BuildScripts\ModulePackage.targets" />
   <Target Name="AfterBuild" DependsOnTargets="PackageModule">
   </Target>
+  <Import Project="packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets" Condition="Exists('packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets')" />
 </Project>

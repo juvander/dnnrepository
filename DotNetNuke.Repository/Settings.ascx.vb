@@ -481,11 +481,8 @@ Namespace DotNetNuke.Modules.Repository
                         txtWatermark.Text = "" ' default value
                     End If
 
-                    If CType(settings("folderlocation"), String) <> "" Then
-                        txtFolderLocation.Text = CType(settings("folderlocation"), String)
-                    Else
-                        txtFolderLocation.Text = Request.MapPath(_portalSettings.HomeDirectory) & "Repository"
-                    End If
+                    txtFolderLocation.Text = Request.MapPath(_portalSettings.HomeDirectory) & "Repository"
+                    txtFolderLocation.ReadOnly = True
 
                     If CType(settings("userfolders"), String) <> "" Then
                         cbUserFolders.Checked = CType(settings("userfolders"), String)
@@ -494,7 +491,9 @@ Namespace DotNetNuke.Modules.Repository
                     End If
 
                     txtPendingLocation.Text = Request.MapPath(_portalSettings.HomeDirectory) & "Repository\Pending"
+                    txtPendingLocation.ReadOnly = True
                     txtAnonymousLocation.Text = Request.MapPath(_portalSettings.HomeDirectory) & "Repository\Anonymous"
+                    txtAnonymousLocation.ReadOnly = True
 
                     ' only HOST account can modify file locations
                     If UserInfo.IsSuperUser Then
